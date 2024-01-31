@@ -1,12 +1,11 @@
 package org.example.SparlqlEndpoint.controllers;
 
 import org.example.SparlqlEndpoint.models.SparqlQuery;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Entity;
@@ -18,6 +17,14 @@ import javax.ws.rs.core.Response;
 @RestController
 @RequestMapping("/sparqlRecommendation")
 public class SparqlEndpointController {
+
+    @Value("${auth.token}")
+    private String authToken;
+
+    @GetMapping("/token")
+    public String getToken() {
+        return authToken;
+    }
 
     private static final String SPARQL_ENDPOINT = "https://sd-c21c8daf.stardog.cloud:5820/vire/query";
 
@@ -62,7 +69,7 @@ public class SparqlEndpointController {
         return client.target(SPARQL_ENDPOINT)
                 .request(MediaType.TEXT_PLAIN)
                 .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_FORM_URLENCODED)
-                .header(HttpHeaders.AUTHORIZATION, "Basic YW5kcmVpcHJlcDpNZWxhbmNvbGllMjAyNA==")
+                .header(HttpHeaders.AUTHORIZATION, getToken())
                 .header(HttpHeaders.ACCEPT, "application/sparql-results+json")
                 .header(HttpHeaders.CACHE_CONTROL, "no-cache")
                 .post(payload);
