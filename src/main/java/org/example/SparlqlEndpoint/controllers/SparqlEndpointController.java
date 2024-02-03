@@ -25,8 +25,14 @@ public class SparqlEndpointController {
     public String getToken() {
         return authToken;
     }
+    
+    @Value("${sparql.endpoint}")
+    private String sparqlEndpoint;
 
-    private static final String SPARQL_ENDPOINT = "https://sd-c21c8daf.stardog.cloud:5820/vire/query";
+    @GetMapping("/sparqlEndpoint")
+    public String getSparqlEndpoint() {
+        return sparqlEndpoint;
+    }
 
     @RequestMapping(method = RequestMethod.GET)
     public ResponseEntity<String> testGetMethod() {
@@ -66,7 +72,7 @@ public class SparqlEndpointController {
     }
 
     private Response sendRequest(Client client, Entity<Form> payload) {
-        return client.target(SPARQL_ENDPOINT)
+        return client.target(getSparqlEndpoint())
                 .request(MediaType.TEXT_PLAIN)
                 .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_FORM_URLENCODED)
                 .header(HttpHeaders.AUTHORIZATION, getToken())
